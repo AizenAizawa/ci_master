@@ -194,7 +194,7 @@
                                 </li>
 
                                 <li class="submenu-item  ">
-                                    <a href="#" class="submenu-link">Grup Kerja</a>
+                                    <a href="<?= base_url('workgroup')?>" class="submenu-link">Grup Kerja</a>
                                 </li>
 
                                 <li class="submenu-item  ">

@@ -5,7 +5,7 @@ function reset_form() {
   $("#txtotal").val('');
   $("#txnominak").val('');
   $("#txsetengah").val('');
-  $("#txpersentamount").val('');
+  $("#txpersentamount").removeAttr('disabled').val('');
   $("#txpersenpokok").val('');
 }
 
@@ -91,8 +91,7 @@ function togglePersentAmount() {
     persentAmountDropdown.value = "";
     label.textContent = "Persen Pokok / Perhari";
     inputField.disabled = true;
-    inputField.value = ""; 
-    inputField.placeholder = "";
+    inputField.value = "";
   }
 }
 
@@ -159,7 +158,7 @@ function simpan_data() {
   let halfday = $("#txsetengah").val();
   let persen = $("#txpersentamount").val();
   let pokok = $("#txpersenpokok").val()
-  if (code === "" || name === ""|| nominal === "" || totalday === "" || nominalday === "" || halfday === "" || persen === "" || pokok === "") {
+  if (code === "" || name === ""|| nominal === "" || totalday === "" || nominalday === "" ) {
       Swal.fire({
           title: 'Error!',
           text: "Ada Form belum dimasukkan!!!",
@@ -241,8 +240,8 @@ function update_data()
 }}
 
 function edit_data(id) {
-    $.post('golongan/edit_table', { id: id }, function (data) {
-        if (data.status === 'ok') {
+  $.post('golongan/edit_table', { id: id }, function (data) {
+      if (data.status === 'ok') {
           $("#txcode").val(data.data.levelgroupCode);
           $("#txname").val(data.data.levelgroupName);
           $("#txnominal").val(data.data.levelgroupAmount);
@@ -250,22 +249,37 @@ function edit_data(id) {
           $("#txnominak").val(data.data.levelgroupNominal);
           $("#txsetengah").val(data.data.levelgroupHalfDay);
           $("#txpersentamount").val(data.data.levelgroupHalfPercent);
-          $("#txpersenpokok").removeAttr('disabled').val(data.data.levelgroupHalfAmount);
+          $("#txpersenpokok").val(data.data.levelgroupHalfAmount);
+
+          // Check values and set or remove the 'disabled' attribute accordingly
+          if (data.data.levelgroupHalfAmount == 0) {
+              $("#txpersenpokok").attr('disabled', 'disabled');
+          } else {
+              $("#txpersenpokok").removeAttr('disabled');
+          }
+
+          if (data.data.levelgroupHalfPercent == 0) {
+              $("#txpersentamount").attr('disabled', 'disabled');
+          } else {
+              $("#txpersentamount").removeAttr('disabled');
+          }
+
           $("#loginModal").data('id', id); 
           $("#loginModal").modal('show');
           $(".btn-submit").hide();
           $(".btn-editen").show();
 
-        } else {
+      } else {
           Swal.fire({
-            title: 'Error!',
-            text: data.msg,
-            icon: 'error',
-            confirmButtonText: 'OK'
+              title: 'Error!',
+              text: data.msg,
+              icon: 'error',
+              confirmButtonText: 'OK'
           })
-        }
-    }, 'json');
+      }
+  }, 'json');
 }
+
 
 function active_data(id, status) {
   if (status == 1) {
